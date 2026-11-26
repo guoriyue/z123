@@ -12,12 +12,14 @@ Z-polynomial (Proudfoot–Xu–Young, arXiv:1706.05575):
 Z_M is palindromic of degree rk M, so here
         Z_M(t) = 1 + z1 t + z2 t^2 + z3 t^3 + z3 t^4 + z2 t^5 + z1 t^6 + t^7.
 
-Python standard library only.   Run:  python3 z123.py
+Python standard library only.   Run:  python3 z123.py        (q = 27)
+                                      python3 z123.py 2      (any prime power q)
 """
+import sys
 from math import comb
 from itertools import product
 
-q = 27          # a prime power: the order of the finite field F_q
+q = int(sys.argv[1]) if len(sys.argv) > 1 else 27          # a prime power: the order of the finite field F_q
 
 # ----------------------------------------------------------------------------------------------
 # 1. The matroid G and its flag f-vector
@@ -68,6 +70,15 @@ alpha_G = {
     (1, 2, 3): sum(n * flags for n, _, _, flags in hyperplane_types),
 }
 
+# Intermediate results: the seven flag numbers of G (compare with BCEL, Corollary 4.14) and the Z-polynomial of G.
+# For every matroid of rank 4:  Z(t) = 1 + W3 t + (W2 + alpha(1,3) - alpha(1,2)) t^2 + W3 t^3 + t^4.
+W3 = alpha_G[(3,)]
+print("G = G_{4,q} with q =", q)
+print("  points", W1, "  lines", W2, "  planes", W3)
+print("  point<line", alpha_G[(1, 2)], "  point<plane", alpha_G[(1, 3)], "  line<plane", alpha_G[(2, 3)],
+      "  point<line<plane", alpha_G[(1, 2, 3)])
+print("  Z_G(t) = 1 +", W3, "t +", W2 + alpha_G[(1, 3)] - alpha_G[(1, 2)], "t^2 +", W3, "t^3 + t^4")
+
 # ----------------------------------------------------------------------------------------------
 # 2. Flag numbers of M = T(G ⊕ G)
 #
@@ -106,7 +117,7 @@ z2 = alpha(5) + alpha(4, 6) - alpha(4, 5)
 z3 = (alpha(4) + alpha(3, 6) - alpha(3, 4) + alpha(2, 5) - alpha(2, 4)
       + alpha(2, 4, 6) - alpha(2, 4, 5) - alpha(2, 3, 6) + alpha(2, 3, 4))
 
-print("q =", q, "  |E(M)| =", 2 * W1, "  rk M = 7")
+print("M = T(G + G):  |E(M)| =", 2 * W1, "  rk M = 7")
 print("z1 =", z1)
 print("z2 =", z2)
 print("z3 =", z3)
